@@ -31,12 +31,14 @@ $(eval $(call SetupJdkLibrary, BUILD_LIBDT_SOCKET, \
     NAME := dt_socket, \
     OPTIMIZATION := LOW, \
     CFLAGS := $(CFLAGS_JDKLIB) $(LIBDT_SOCKET_CPPFLAGS), \
+    DISABLED_WARNINGS_gcc := stringop-truncation, \
     EXTRA_HEADER_DIRS := \
         include \
         libjdwp/export, \
     LDFLAGS := $(LDFLAGS_JDKLIB) \
         $(call SET_SHARED_LIBRARY_ORIGIN), \
     LIBS_linux := -lpthread, \
+    LIBS_haiku := -lnetwork, \
     LIBS_windows := $(JDKLIB_LIBS) ws2_32.lib iphlpapi.lib, \
 ))
 
@@ -52,7 +54,7 @@ $(eval $(call SetupJdkLibrary, BUILD_LIBJDWP, \
     NAME := jdwp, \
     OPTIMIZATION := LOW, \
     CFLAGS := $(CFLAGS_JDKLIB) -DJDWP_LOGGING, \
-    DISABLED_WARNINGS_gcc := unused-function, \
+    DISABLED_WARNINGS_gcc := unused-function format-truncation, \
     DISABLED_WARNINGS_clang := sometimes-uninitialized format-nonliteral \
         self-assign, \
     EXTRA_HEADER_DIRS := \
@@ -63,6 +65,7 @@ $(eval $(call SetupJdkLibrary, BUILD_LIBJDWP, \
     LIBS := $(JDKLIB_LIBS), \
     LIBS_linux := $(LIBDL), \
     LIBS_macosx := -liconv, \
+    LIBS_haiku := -liconv, \
     LIBS_aix := -liconv, \
 ))
 

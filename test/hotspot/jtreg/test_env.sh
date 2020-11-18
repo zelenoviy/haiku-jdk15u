@@ -56,7 +56,7 @@ echo "TESTOPTS=${TESTOPTS}"
 # set platform-dependent variables
 OS=`uname -s`
 case "$OS" in
-  AIX | Darwin | Linux )
+  AIX | Darwin | Linux | Haiku )
     NULL=/dev/null
     PS=":"
     FS="/"
@@ -153,6 +153,11 @@ grep "windows" vm_version.out > ${NULL}
 if [ $? = 0 ]
 then
   VM_OS="windows"
+fi
+grep "haiku" vm_version.out > ${NULL}
+if [ $? = 0 ]
+then
+  VM_OS="haiku"
 fi
 
 VM_CPU="unknown"

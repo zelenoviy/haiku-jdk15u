@@ -56,7 +56,7 @@ echo "TESTCLASSES=${TESTCLASSES}"
 # set platform-dependent variables
 OS=`uname -s`
 case "$OS" in
-  Linux | Darwin | AIX )
+  Linux | Darwin | AIX | Haiku )
     NULL=/dev/null
     PS=":"
     FS="/"

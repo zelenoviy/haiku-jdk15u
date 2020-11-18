@@ -30,7 +30,7 @@
 # set platform-dependent variables
 OS=`uname -s`
 case "$OS" in
-  Linux | Darwin | AIX ) ;;
+  Linux | Darwin | AIX | Haiku ) ;;
   Windows* | CYGWIN* )
     echo "Passed"; exit 0 ;;
   * ) echo "Unrecognized system!" ;  exit 1 ;;

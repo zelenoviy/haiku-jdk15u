@@ -53,7 +53,7 @@ echo "CLASSPATH=${CLASSPATH}"
 # set platform-dependent variables
 OS=`uname -s`
 case "$OS" in
-  Linux | Darwin | AIX )
+  Linux | Darwin | AIX | Haiku )
     PS=":"
     FS="/"
     ;;

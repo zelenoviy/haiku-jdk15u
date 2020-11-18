@@ -376,6 +376,8 @@ AC_DEFUN([FLAGS_SETUP_CFLAGS_HELPER],
     CFLAGS_OS_DEF_JVM="-DAIX"
   elif test "x$OPENJDK_TARGET_OS" = xbsd; then
     CFLAGS_OS_DEF_JDK="-D_ALLBSD_SOURCE"
+  elif test "x$OPENJDK_TARGET_OS" = xhaiku; then
+    CFLAGS_OS_DEF_JVM="-DHAIKU"
   elif test "x$OPENJDK_TARGET_OS" = xwindows; then
     CFLAGS_OS_DEF_JVM="-D_WINDOWS -DWIN32 -D_JNI_IMPLEMENTATION_"
   fi
@@ -446,8 +448,13 @@ AC_DEFUN([FLAGS_SETUP_CFLAGS_HELPER],
   fi
 
   if test "x$TOOLCHAIN_TYPE" = xgcc; then
-    TOOLCHAIN_CFLAGS_JVM="$TOOLCHAIN_CFLAGS_JVM -fcheck-new -fstack-protector"
-    TOOLCHAIN_CFLAGS_JDK="-pipe -fstack-protector"
+    if test "x$OPENJDK_TARGET_OS" != xhaiku; then
+      TOOLCHAIN_CFLAGS_JVM="$TOOLCHAIN_CFLAGS_JVM -fcheck-new -fstack-protector"
+      TOOLCHAIN_CFLAGS_JDK="-pipe -fstack-protector"
+    else
+      TOOLCHAIN_CFLAGS_JVM="$TOOLCHAIN_CFLAGS_JVM -fcheck-new"
+      TOOLCHAIN_CFLAGS_JDK="-pipe"
+    fi
     # reduce lib size on linux in link step, this needs also special compile flags
     # do this on s390x also for libjvm (where serviceability agent is not supported)
     if test "x$ENABLE_LINKTIME_GC" = xtrue; then

@@ -113,6 +113,10 @@ public class Platform {
         return isOs("mac");
     }
 
+    public static boolean isHaiku() {
+        return isOs("haiku");
+    }
+
     public static boolean isWindows() {
         return isOs("win");
     }

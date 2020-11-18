@@ -31,7 +31,7 @@
 #include <math.h>
 #define ISNANF(f) isnan(f)
 #define ISNAND(d) isnan(d)
-#elif defined(__linux__) || defined(_ALLBSD_SOURCE)
+#elif defined(__linux__) || defined(_ALLBSD_SOURCE) || defined(__HAIKU__)
 #include <math.h>
 #define ISNANF(f) isnanf(f)
 #define ISNAND(d) isnan(d)

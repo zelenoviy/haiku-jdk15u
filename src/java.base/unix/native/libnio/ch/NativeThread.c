@@ -45,6 +45,9 @@
   #include <pthread.h>
   /* Also defined in net/bsd_close.c */
   #define INTERRUPT_SIGNAL SIGIO
+#elif __HAIKU__
+  #include <OS.h>
+  #define INTERRUPT_SIGNAL (SIGRTMAX - 2)
 #else
   #error "missing platform-specific definition here"
 #endif
@@ -76,14 +79,22 @@ Java_sun_nio_ch_NativeThread_init(JNIEnv *env, jclass cl)
 JNIEXPORT jlong JNICALL
 Java_sun_nio_ch_NativeThread_current(JNIEnv *env, jclass cl)
 {
+#if defined(__HAIKU__)
+    return (jlong)find_thread(NULL);
+#else
     return (jlong)pthread_self();
+#endif
 }
 
 JNIEXPORT void JNICALL
 Java_sun_nio_ch_NativeThread_signal(JNIEnv *env, jclass cl, jlong thread)
 {
     int ret;
+#if defined(__HAIKU__)
+    ret = send_signal(thread, INTERRUPT_SIGNAL);
+#else
     ret = pthread_kill((pthread_t)thread, INTERRUPT_SIGNAL);
+#endif
 #ifdef MACOSX
     if (ret != 0 && ret != ESRCH)
 #else
