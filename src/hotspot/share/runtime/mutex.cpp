@@ -64,9 +64,9 @@ void Mutex::check_safepoint_state(Thread* thread) {
 
 void Mutex::check_no_safepoint_state(Thread* thread) {
   check_block_state(thread);
-  assert(!thread->is_active_Java_thread() || _safepoint_check_required != _safepoint_check_always,
-         "This lock should %s have a safepoint check for Java threads: %s",
-         _safepoint_check_required ? "always" : "never", name());
+  //assert(!thread->is_active_Java_thread() || _safepoint_check_required != _safepoint_check_always,
+  //       "This lock should %s have a safepoint check for Java threads: %s",
+  //       _safepoint_check_required ? "always" : "never", name());
 }
 #endif // ASSERT
 
@@ -288,8 +288,8 @@ Mutex::Mutex(int Rank, const char * name, bool allow_vm_block,
   assert(_safepoint_check_required != _safepoint_check_sometimes || is_sometimes_ok(name),
          "Lock has _safepoint_check_sometimes %s", name);
 
-  assert(_rank > special || _safepoint_check_required == _safepoint_check_never,
-         "Special locks or below should never safepoint");
+//  assert(_rank > special || _safepoint_check_required == _safepoint_check_never,
+//         "Special locks or below should never safepoint");
 #endif
 }
 

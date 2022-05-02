@@ -146,7 +146,7 @@ SplashWindow::ScheduleNextFrame()
 
     if (fSplash->isVisible > 0 && SplashIsStillLooping(fSplash)) {
         BMessenger messenger(NULL, this);
-        assert(messenger.InitCheck() == B_OK);
+        assert(messenger.IsValid());
 
         unsigned long long timeout = fSplash->time
             + fSplash->frames[fSplash->currentFrame].delay - SplashTime();

@@ -333,14 +333,14 @@ JVM_handle_haiku_signal(int sig,
       address addr = (address) info->si_addr;
 
       // check if fault address is within thread stack
-      if (thread->on_local_stack(addr)) {
+      if (thread->is_in_full_stack(addr)) {
         // stack overflow
         if (thread->in_stack_yellow_reserved_zone(addr)) {
           if (thread->thread_state() == _thread_in_Java) {
             if (thread->in_stack_reserved_zone(addr)) {
               frame fr;
               if (os::Haiku::get_frame_at_stack_banging_point(thread, uc, &fr)) {
-                assert(fr.is_java_frame(), "Must be a Java frame");
+                //assert(fr.is_java_frame(), "Must be a Java frame");
                 frame activation = SharedRuntime::look_for_reserved_stack_annotated_method(thread, fr);
                 if (activation.sp() != NULL) {
                   thread->disable_stack_reserved_zone();
@@ -368,41 +368,25 @@ JVM_handle_haiku_signal(int sig,
           // to handle_unexpected_exception way down below.
           thread->disable_stack_red_zone();
           tty->print_raw_cr("An irrecoverable stack overflow has occurred.");
-        } else {
-          // The thread stack is already entirely mapped on Haiku, but I'm
-          // keeping this code around in case that changes.
-#if 0
-          // Accessing stack address below sp may cause SEGV if current
-          // thread has MAP_GROWSDOWN stack. This should only happen when
-          // current thread was created by user code with MAP_GROWSDOWN flag
-          // and then attached to VM. See notes in os_linux.cpp.
-          if (thread->osthread()->expanding_stack() == 0) {
-             thread->osthread()->set_expanding_stack();
-             if (os::Haiku::manually_expand_stack(thread, addr)) {
-               thread->osthread()->clear_expanding_stack();
-               return 1;
-             }
-             thread->osthread()->clear_expanding_stack();
-          } else {
-             fatal("recursive segv. expanding stack.");
-          }
-#endif
-          // We should never reach here
-          fatal("segv. within stack range, but not on guard pages!");
         }
       }
     }
 
-    if ((sig == SIGSEGV) && VM_Version::is_cpuinfo_segv_addr(pc)) {
+    if ((sig == SIGSEGV || sig == SIGBUS) && VM_Version::is_cpuinfo_segv_addr(pc)) {
       // Verify that OS save/restore AVX registers.
       stub = VM_Version::cpuinfo_cont_addr();
     }
 
-    if (thread->thread_state() == _thread_in_Java) {
+    // We test if stub is already set (by the stack overflow code
+    // above) so it is not overwritten by the code that follows. This
+    // check is not required on other platforms, because on other
+    // platforms we check for SIGSEGV only or SIGBUS only, where here
+    // we have to check for both SIGSEGV and SIGBUS.
+    if (thread->thread_state() == _thread_in_Java && stub == NULL) {
       // Java thread running in Java code => find exception handler if any
       // a fault inside compiled code, the interpreter, or a stub
 
-      if (sig == SIGSEGV && os::is_poll_address((address)info->si_addr)) {
+      if ((sig == SIGSEGV || sig == SIGBUS) && SafepointMechanism::is_poll_address((address)info->si_addr)) {
         stub = SharedRuntime::get_poll_stub(pc);
       } else if (sig == SIGBUS /* && info->si_code == BUS_OBJERR */) {
         // BugId 4454115: A read from a MappedByteBuffer can fault
@@ -443,9 +427,9 @@ JVM_handle_haiku_signal(int sig,
           // the exception that we do the d2i by hand with different
           // rounding. Seems kind of weird.
           // NOTE: that we take the exception at the NEXT floating point instruction.
-          assert(pc[0] == 0xDB, "not a FIST opcode");
-          assert(pc[1] == 0x14, "not a FIST opcode");
-          assert(pc[2] == 0x24, "not a FIST opcode");
+          //assert(pc[0] == 0xDB, "not a FIST opcode");
+          //assert(pc[1] == 0x14, "not a FIST opcode");
+          //assert(pc[2] == 0x24, "not a FIST opcode");
           return true;
         } else if (op == 0xF7) {
           // IDIV
@@ -457,7 +441,7 @@ JVM_handle_haiku_signal(int sig,
           fatal("please update this code.");
         }
 #endif // AMD64
-      } else if (sig == SIGSEGV &&
+      } else if ((sig == SIGSEGV || sig == SIGBUS) &&
                MacroAssembler::uses_implicit_null_check(info->si_addr)) {
           // Determination of interpreter/vtable stub/compiled code null exception
           stub = SharedRuntime::continuation_for_implicit_exception(thread, pc, SharedRuntime::IMPLICIT_NULL);
@@ -569,7 +553,7 @@ JVM_handle_haiku_signal(int sig,
     // save all thread context in case we need to restore it
     if (thread != NULL) thread->set_saved_exception_pc(pc);
 
-    uc->uc_mcontext.REG_PC = (long unsigned int)stub;
+    os::Haiku::ucontext_set_pc(uc, stub);//uc->uc_mcontext.REG_PC = (long unsigned int)stub;
     return true;
   }
 
@@ -614,6 +598,19 @@ bool os::is_allocatable(size_t bytes) {
 #else
   return bytes <= (size_t)1400 * M;
 #endif // AMD64
+}
+
+juint os::cpu_microcode_revision() {
+  juint result = 0;
+  // TODO implement
+/*  char data[8];
+  size_t sz = sizeof(data);
+  int ret = sysctlbyname("machdep.cpu.microcode_version", data, &sz, NULL, 0);
+  if (ret == 0) {
+    if (sz == 4) result = *((juint*)data);
+    if (sz == 8) result = *((juint*)data + 1); // upper 32-bits
+  }*/
+  return result;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

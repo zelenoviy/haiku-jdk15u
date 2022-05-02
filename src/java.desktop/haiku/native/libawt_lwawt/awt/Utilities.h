@@ -106,7 +106,7 @@ typedef JNILocal<jobjectArray>::t jobjectArrayLocal;
  * Go look at the Windows DnD stuff for example usage.
  */
 
-jthrowable safe_ExceptionOccurred(JNIEnv *env) throw (std::bad_alloc);
+jthrowable safe_ExceptionOccurred(JNIEnv *env) noexcept(true);
 
 /*
  * NOTE: You need these macros only if you take care of performance, since they

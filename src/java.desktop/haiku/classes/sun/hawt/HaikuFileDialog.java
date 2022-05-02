@@ -262,22 +262,12 @@ class HaikuFileDialog implements FileDialogPeer {
     }
 
     @Override
-    public int checkImage(Image img, int w, int h, ImageObserver o) {
-        return 0;
-    }
-
-    @Override
     public void coalescePaintEvent(PaintEvent e) {
     }
 
     @Override
     public void createBuffers(int numBuffers, BufferCapabilities caps)
             throws AWTException {
-    }
-
-    @Override
-    public Image createImage(ImageProducer producer) {
-        return null;
     }
 
     @Override
@@ -369,11 +359,6 @@ class HaikuFileDialog implements FileDialogPeer {
 
     @Override
     public void paint(Graphics g) {
-    }
-
-    @Override
-    public boolean prepareImage(Image img, int w, int h, ImageObserver o) {
-        return false;
     }
 
     @Override

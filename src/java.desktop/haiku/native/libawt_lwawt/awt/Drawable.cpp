@@ -28,6 +28,7 @@
 #include <Bitmap.h>
 #include <GraphicsDefs.h>
 #include <Rect.h>
+#include <Size.h>
 #include <View.h>
 
 #include "ContentView.h"
@@ -78,8 +79,8 @@ Drawable::Allocate(int width, int height)
 		int oldHeight = bounds.IntegerHeight() + 1;
 		int blitHeight = height > oldHeight ? oldHeight : height;
 
-		newSurface->ImportBits(fSurface, BPoint(0, 0), BPoint(0, 0), blitWidth,
-			blitHeight);
+		newSurface->ImportBits(fSurface, BPoint(0, 0), BPoint(0, 0), 
+			BSize(blitWidth, blitHeight));
 
 		delete fSurface;
 	}

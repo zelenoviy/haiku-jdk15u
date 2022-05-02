@@ -67,11 +67,6 @@ public class HaikuMenu extends HaikuMenuItem implements MenuPeer {
     }
 
     @Override
-    public void addSeparator() {
-    	// unused
-    }
-
-    @Override
     public void setLabel(String label) {
     	nativeSetLabel(getModel(), label);
     }

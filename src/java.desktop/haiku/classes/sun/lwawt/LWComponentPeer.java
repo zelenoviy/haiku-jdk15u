@@ -984,11 +984,6 @@ public abstract class LWComponentPeer<T extends Component, D extends JComponent>
     }
 
     @Override
-    public final Image createImage(final ImageProducer producer) {
-        return new ToolkitImage(producer);
-    }
-
-    @Override
     public final Image createImage(final int width, final int height) {
         return getLWGC().createAcceleratedImage(getTarget(), width, height);
     }
@@ -996,18 +991,6 @@ public abstract class LWComponentPeer<T extends Component, D extends JComponent>
     @Override
     public final VolatileImage createVolatileImage(final int w, final int h) {
         return new SunVolatileImage(getTarget(), w, h);
-    }
-
-    @Override
-    public boolean prepareImage(Image img, int w, int h, ImageObserver o) {
-        // TODO: is it a right/complete implementation?
-        return Toolkit.getDefaultToolkit().prepareImage(img, w, h, o);
-    }
-
-    @Override
-    public int checkImage(Image img, int w, int h, ImageObserver o) {
-        // TODO: is it a right/complete implementation?
-        return Toolkit.getDefaultToolkit().checkImage(img, w, h, o);
     }
 
     @Override

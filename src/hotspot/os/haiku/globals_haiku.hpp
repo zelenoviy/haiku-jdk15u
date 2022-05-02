@@ -36,8 +36,7 @@
                          diagnostic_pd, \
                          notproduct, \
                          range, \
-                         constraint, \
-                         writeable)
+                         constraint)
 // None
 
 //

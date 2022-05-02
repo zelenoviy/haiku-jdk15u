@@ -517,7 +517,7 @@ JVM_handle_bsd_signal(int sig,
       address addr = (address) info->si_addr;
 
       // check if fault address is within thread stack
-      if (thread->is_in_full_stack(addr)) {
+      if (thread->on_local_stack(addr)) {
         // stack overflow
         if (thread->in_stack_yellow_reserved_zone(addr)) {
           if (thread->thread_state() == _thread_in_Java) {

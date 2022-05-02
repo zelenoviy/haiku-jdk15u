@@ -93,7 +93,7 @@ DoCallback(jobject obj, const char* name, const char* description, ...)
 
 
 jthrowable
-safe_ExceptionOccurred(JNIEnv *env) throw (std::bad_alloc) {
+safe_ExceptionOccurred(JNIEnv *env) noexcept(true) {
     jthrowable xcp = env->ExceptionOccurred();
     if (xcp != NULL) {
         env->ExceptionClear(); // if we don't do this, FindClass will fail

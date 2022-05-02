@@ -1514,12 +1514,12 @@ bool os::unguard_memory(char* addr, size_t size) {
 void os::large_page_init() {
 }
 
-char* os::reserve_memory_special(size_t bytes, size_t alignment, char* req_addr, bool exec) {
+char* os::pd_reserve_memory_special(size_t bytes, size_t alignment, char* req_addr, bool exec) {
   fatal("os::reserve_memory_special should not be called on Haiku.");
   return NULL;
 }
 
-bool os::release_memory_special(char* base, size_t bytes) {
+bool os::pd_release_memory_special(char* base, size_t bytes) {
   fatal("os::release_memory_special should not be called on Haiku.");
   return false;
 }
@@ -2410,19 +2410,6 @@ jint os::init_2(void) {
   return JNI_OK;
 }
 
-// Mark the polling page as unreadable
-void os::make_polling_page_unreadable(void) {
-  if (!guard_memory((char*)_polling_page, Haiku::page_size()))
-    fatal("Could not disable polling page");
-};
-
-// Mark the polling page as readable
-void os::make_polling_page_readable(void) {
-  if (!haiku_mprotect((char *)_polling_page, Haiku::page_size(), PROT_READ)) {
-    fatal("Could not enable polling page");
-  }
-};
-
 int os::active_processor_count() {
   int online_cpus = ::sysconf(_SC_NPROCESSORS_ONLN);
   assert(online_cpus > 0 && online_cpus <= processor_count(), "sanity check");
@@ -2773,10 +2760,6 @@ jlong os::thread_cpu_time(Thread *thread, bool user_sys_cpu_time) {
   return os::Haiku::fast_thread_cpu_time(thread, user_sys_cpu_time);
 }
 
-//
-//  -1 on error.
-//
-
 void os::current_thread_cpu_time_info(jvmtiTimerInfo *info_ptr) {
   info_ptr->max_value = ALL_64_BITS;       // will not wrap in less than 64 bits
   info_ptr->may_skip_backward = false;     // elapsed time not wall time
@@ -2904,6 +2887,16 @@ int os::get_core_path(char* buffer, size_t bufferSize) {
   return strlen(buffer);
 }
 
+bool os::supports_map_sync() {
+  return false;
+}
+
+#ifndef PRODUCT
+void TestReserveMemorySpecial_test() {
+  // No tests available for this platform
+}
+#endif
+
 bool os::start_debugging(char *buf, int buflen) {
   int len = (int)strlen(buf);
   char *p = &buf[len];
@@ -2928,8 +2921,4 @@ bool os::start_debugging(char *buf, int buflen) {
     yes = false;
   }
   return yes;
-}
-
-bool os::supports_map_sync() {
-  return false;
 }

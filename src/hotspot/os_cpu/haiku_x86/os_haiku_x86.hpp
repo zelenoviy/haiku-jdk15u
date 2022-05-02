@@ -26,9 +26,8 @@
 #define OS_CPU_HAIKU_X86_OS_HAIKU_X86_HPP
 
   static void setup_fpu();
-  // Indicates whether OS supports SSE. The CPU is checked
-  // elsewhere.
   static bool supports_sse() { return true; }
+  static juint cpu_microcode_revision();  
 
   static jlong rdtsc();
 

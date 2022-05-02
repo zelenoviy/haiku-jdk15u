@@ -248,10 +248,10 @@ public class HaikuToolkit extends LWToolkit {
         return new HaikuPlatformFont(name, style);
     }
 
-    @Override
-    public RobotPeer createRobot(Robot target, GraphicsDevice device) {
-        return new HaikuRobot(target, device);
-    }
+//    @Override
+//    public RobotPeer createRobot(Robot target, GraphicsDevice device) {
+//        return new HaikuRobot(target, device);
+//    }
 
     @Override
     public boolean areExtraMouseButtonsEnabled() throws HeadlessException {

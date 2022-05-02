@@ -44,13 +44,6 @@ inline bool os::must_commit_stack_guard_pages() {
   return true;
 }
 
-
-// On Haiku, reservations are made on a page by page basis, nothing to do.
-inline void os::pd_split_reserved_memory(char *base, size_t size,
-                                      size_t split, bool realloc) {
-}
-
-
 // Bang the shadow pages if they need to be touched to be mapped.
 inline void os::map_stack_shadow_pages(address sp) {
 }
@@ -116,8 +109,16 @@ inline int os::raw_send(int fd, char* buf, size_t nBytes, uint flags) {
   return os::send(fd, buf, nBytes, flags);
 }
 
+inline int os::connect(int fd, struct sockaddr* him, socklen_t len) {
+  RESTARTABLE_RETURN_INT(::connect(fd, him, len));
+}
+
 inline struct hostent* os::get_host_by_name(char* name) {
   return ::gethostbyname(name);
+}
+
+inline bool os::supports_monotonic_clock() {
+  return true;
 }
 
 inline void os::exit(int num) {
